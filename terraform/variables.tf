@@ -16,16 +16,6 @@ variable "public_route_cidr" {
   default     = "0.0.0.0/0"
 }
 
-variable "container_name" {
-  description = "The name of the container"
-  type        = string
-}
-
-variable "container_image" {
-  description = "The image of the container"
-  type        = string
-}
-
 variable "task_cpu" {
   description = "The amount of CPU to reserve for the container"
   type        = string
