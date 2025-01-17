@@ -1,0 +1,11 @@
+aws_region        = "us-east-1"
+vpc_cidr          = "10.0.1.0/24"
+public_route_cidr = "0.0.0.0/0"
+container_name    = "mr-bot"
+container_image   = "aws_account_id.dkr.ecr.us-east-1.amazonaws.com/poss11111/mr-bot:0.0.1"
+task_cpu          = "256"
+task_memory       = "512"
+container_port    = 80
+host_port         = 80
+ecs_cluster_name  = "main-cluster"
+ecs_service_name  = "mr-bot-service"
