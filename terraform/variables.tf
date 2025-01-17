@@ -46,10 +46,10 @@ variable "ecs_cluster_name" {
   default     = "main-cluster"
 }
 
-variable "ecs_service_name" {
+variable "mr_bot_service_name" {
   description = "The name of the ECS service"
   type        = string
-  default     = "main-service"
+  default     = "mr-bot-service"
 }
 
 variable "common_tags" {

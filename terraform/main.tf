@@ -8,10 +8,6 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
 }
 
-resource "aws_ecs_cluster" "main" {
-  name = var.ecs_cluster_name
-}
-
 resource "aws_network_acl" "main" {
   vpc_id = aws_vpc.main.id
 }
