@@ -8,10 +8,6 @@ resource "aws_ecs_service" "app" {
   desired_count  = 1
   launch_type    = "FARGATE"
   propagate_tags = "TASK_DEFINITION"
-  network_configuration {
-    subnets          = [aws_subnet.public.id]
-    assign_public_ip = true
-  }
   deployment_controller {
     type = "EXTERNAL"
   }
