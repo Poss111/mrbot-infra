@@ -12,6 +12,9 @@ resource "aws_ecs_service" "app" {
     subnets          = [aws_subnet.public.id]
     assign_public_ip = true
   }
+  deployment_controller {
+    type = "EXTERNAL"
+  }
 }
 
 resource "aws_iam_role" "ecs_task_role" {
