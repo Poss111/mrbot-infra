@@ -9,9 +9,6 @@ resource "aws_ecs_service" "app" {
   launch_type     = "FARGATE"
   propagate_tags  = "TASK_DEFINITION"
   task_definition = aws_ecs_task_definition.placeholder_task.arn
-  deployment_controller {
-    type = "EXTERNAL"
-  }
 
   network_configuration {
     subnets          = [aws_subnet.public.id]
