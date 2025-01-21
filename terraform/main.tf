@@ -48,12 +48,43 @@ resource "aws_network_acl_association" "public" {
   network_acl_id = aws_network_acl.main.id
 }
 
+resource "aws_security_group" "mr-bot-sg" {
+  name        = "mr-bot-sg"
+  description = "Security group for VPC endpoint to Secrets Manager"
+  vpc_id      = aws_vpc.main.id
+
+  # Ingress rule to allow traffic from specific trusted CIDR ranges (optional)
+  ingress {
+    description = "Allow HTTPS traffic from trusted CIDRs"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [
+      var.vpc_cidr
+    ]
+  }
+
+  # Outbound rules (default allows all outbound traffic)
+  egress {
+    from_port = 0
+    to_port   = 0
+    protocol  = "-1" # All traffic
+    cidr_blocks = [
+      var.vpc_cidr
+    ]
+  }
+
+  tags = {
+    Name = "mr-bot-sg"
+  }
+}
+
 resource "aws_vpc_endpoint" "secretsmanager" {
   vpc_id             = aws_vpc.main.id
   service_name       = "com.amazonaws.${var.aws_region}.secretsmanager"
   vpc_endpoint_type  = "Interface"
   subnet_ids         = [aws_subnet.public.id]
-  security_group_ids = [aws_security_group.sg.id]
+  security_group_ids = [aws_security_group.mr-bot-sg.id]
 
   private_dns_enabled = true
 }
