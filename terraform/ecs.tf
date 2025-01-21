@@ -104,6 +104,7 @@ resource "aws_iam_role_policy" "ecs_task_execution_policy" {
           "ecr:BatchCheckLayerAvailability",
           "ecr:GetDownloadUrlForLayer",
           "ecr:BatchGetImage",
+          "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:PutLogEvents",
           "secretsmanager:*"
