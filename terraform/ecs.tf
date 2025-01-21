@@ -107,10 +107,14 @@ resource "aws_iam_role_policy" "ecs_task_execution_policy" {
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:PutLogEvents",
-          "secretsmanager:*"
         ],
         Resource = "*",
       },
+      {
+        Effect   = "Allow",
+        Action   = "secretsmanager:GetSecretValue",
+        Resource = "arn:aws:secretsmanager:*:*:secret:mr-bot/*"
+      }
     ],
   })
 }

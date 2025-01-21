@@ -89,5 +89,12 @@ resource "aws_vpc_endpoint" "secretsmanager" {
   security_group_ids = [aws_security_group.mr-bot-sg.id]
 
   private_dns_enabled = true
+}
 
+resource "aws_vpc_endpoint" "cloudwatch" {
+  vpc_id             = aws_vpc.main.id
+  service_name       = "com.amazonaws.${var.aws_region}.logs"
+  vpc_endpoint_type  = "Interface"
+  subnet_ids         = [aws_subnet.public.id]
+  security_group_ids = [aws_security_group.mr-bot-sg.id]
 }
