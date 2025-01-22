@@ -65,9 +65,6 @@ resource "aws_security_group" "mr-bot-sg" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = [
-      var.vpc_cidr
-    ]
   }
 
   # Outbound rules (default allows all outbound traffic)
