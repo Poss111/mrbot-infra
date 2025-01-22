@@ -36,6 +36,17 @@ resource "aws_network_acl_rule" "allow_https_inbound" {
   to_port        = 443
 }
 
+resource "aws_network_acl_rule" "allow_udp_inbound" {
+  network_acl_id = aws_network_acl.main.id
+  rule_number    = 120
+  egress         = false
+  protocol       = "udp"
+  rule_action    = "allow"
+  cidr_block     = var.public_route_cidr
+  from_port      = 443
+  to_port        = 443
+}
+
 resource "aws_network_acl_rule" "allow_all_outbound" {
   network_acl_id = aws_network_acl.main.id
   rule_number    = 100
@@ -109,11 +120,12 @@ resource "aws_vpc_endpoint" "ecr" {
 }
 
 resource "aws_vpc_endpoint" "ecr_api" {
-  vpc_id             = aws_vpc.main.id
-  service_name       = "com.amazonaws.${var.aws_region}.ecr.api"
-  vpc_endpoint_type  = "Interface"
-  subnet_ids         = [aws_subnet.public.id]
-  security_group_ids = [aws_security_group.mr-bot-sg.id]
+  vpc_id              = aws_vpc.main.id
+  service_name        = "com.amazonaws.${var.aws_region}.ecr.api"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = [aws_subnet.public.id]
+  security_group_ids  = [aws_security_group.mr-bot-sg.id]
+  private_dns_enabled = true
 }
 
 resource "aws_vpc_endpoint" "s3" {
