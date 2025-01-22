@@ -113,7 +113,7 @@ resource "aws_iam_role_policy" "ecs_task_execution_policy" {
       {
         Effect   = "Allow",
         Action   = "secretsmanager:GetSecretValue",
-        Resource = "arn:aws:secretsmanager:*:*:secret:mr-bot/*"
+        Resource = "arn:aws:secretsmanager:*:*:secret:prod/MrBot/*"
       }
     ],
   })
