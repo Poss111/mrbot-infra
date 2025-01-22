@@ -61,6 +61,7 @@ resource "aws_network_acl_association" "public" {
   network_acl_id = aws_network_acl.main.id
 }
 
+// TODO: Update route table to associate to the public subnet
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 }
@@ -70,6 +71,7 @@ resource "aws_security_group" "mr-bot-sg" {
   description = "Security group for VPC endpoint to Secrets Manager"
   vpc_id      = aws_vpc.main.id
 
+  # TODO Ensure inbout rules are actually added
   # Ingress rule to allow traffic from specific trusted CIDR ranges (optional)
   ingress {
     description = "Allow HTTPS traffic from trusted CIDRs"
@@ -94,29 +96,30 @@ resource "aws_security_group" "mr-bot-sg" {
 }
 
 resource "aws_vpc_endpoint" "secretsmanager" {
-  vpc_id             = aws_vpc.main.id
-  service_name       = "com.amazonaws.${var.aws_region}.secretsmanager"
-  vpc_endpoint_type  = "Interface"
-  subnet_ids         = [aws_subnet.public.id]
-  security_group_ids = [aws_security_group.mr-bot-sg.id]
-
+  vpc_id              = aws_vpc.main.id
+  service_name        = "com.amazonaws.${var.aws_region}.secretsmanager"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = [aws_subnet.public.id]
+  security_group_ids  = [aws_security_group.mr-bot-sg.id]
   private_dns_enabled = true
 }
 
 resource "aws_vpc_endpoint" "cloudwatch" {
-  vpc_id             = aws_vpc.main.id
-  service_name       = "com.amazonaws.${var.aws_region}.logs"
-  vpc_endpoint_type  = "Interface"
-  subnet_ids         = [aws_subnet.public.id]
-  security_group_ids = [aws_security_group.mr-bot-sg.id]
+  vpc_id              = aws_vpc.main.id
+  service_name        = "com.amazonaws.${var.aws_region}.logs"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = [aws_subnet.public.id]
+  security_group_ids  = [aws_security_group.mr-bot-sg.id]
+  private_dns_enabled = true
 }
 
 resource "aws_vpc_endpoint" "ecr" {
-  vpc_id             = aws_vpc.main.id
-  service_name       = "com.amazonaws.${var.aws_region}.ecr.dkr"
-  vpc_endpoint_type  = "Interface"
-  subnet_ids         = [aws_subnet.public.id]
-  security_group_ids = [aws_security_group.mr-bot-sg.id]
+  vpc_id              = aws_vpc.main.id
+  service_name        = "com.amazonaws.${var.aws_region}.ecr.dkr"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = [aws_subnet.public.id]
+  security_group_ids  = [aws_security_group.mr-bot-sg.id]
+  private_dns_enabled = true
 }
 
 resource "aws_vpc_endpoint" "ecr_api" {
