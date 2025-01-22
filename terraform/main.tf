@@ -50,6 +50,10 @@ resource "aws_network_acl_association" "public" {
   network_acl_id = aws_network_acl.main.id
 }
 
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.main.id
+}
+
 resource "aws_security_group" "mr-bot-sg" {
   name        = "mr-bot-sg"
   description = "Security group for VPC endpoint to Secrets Manager"
