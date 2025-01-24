@@ -137,3 +137,7 @@ resource "aws_vpc_endpoint" "s3" {
   vpc_endpoint_type = "Gateway"
   route_table_ids   = [aws_route_table.public.id]
 }
+
+resource "aws_egress_only_internet_gateway" "vpc_egress_gateway" {
+  vpc_id = aws_vpc.main.id
+}
