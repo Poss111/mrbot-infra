@@ -85,15 +85,15 @@ resource "aws_vpc_security_group_ingress_rule" "mr_bot_sg_ingress" {
   security_group_id = aws_security_group.mr-bot-sg.id
   from_port         = 443
   to_port           = 443
-  cidr_ipv4         = [var.vpc_cidr]
+  cidr_ipv4         = var.vpc_cidr
 }
 
 resource "aws_vpc_security_group_egress_rule" "mr_bot_sg_egress" {
-  ip_protocol       = "-1" # All traffic
+  ip_protocol       = "-1"
   security_group_id = aws_security_group.mr-bot-sg.id
   from_port         = 0
   to_port           = 0
-  cidr_ipv4         = "0.0.0.0"
+  cidr_ipv4         = "0.0.0.0/0"
 }
 
 resource "aws_vpc_endpoint" "secretsmanager" {
