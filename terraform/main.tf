@@ -80,24 +80,20 @@ resource "aws_security_group" "mr-bot-sg" {
   }
 }
 
-resource "aws_security_group_rule" "mr_bot_sg_ingress" {
-  type              = "ingress"
+resource "aws_vpc_security_group_ingress_rule" "mr_bot_sg_ingress" {
+  ip_protocol       = "tcp"
+  security_group_id = aws_security_group.mr-bot-sg.id
   from_port         = 443
   to_port           = 443
-  protocol          = "tcp"
-  security_group_id = aws_security_group.mr-bot-sg.id
-  description       = "Allow HTTPS traffic from trusted CIDRs"
+  cidr_ipv4         = [var.vpc_cidr]
 }
 
-resource "aws_security_group_rule" "mr_bot_sg_egress" {
-  type              = "egress"
+resource "aws_vpc_security_group_egress_rule" "mr_bot_sg_egress" {
+  ip_protocol       = "-1" # All traffic
+  security_group_id = aws_security_group.mr-bot-sg.id
   from_port         = 0
   to_port           = 0
-  protocol          = "-1" # All traffic
-  security_group_id = aws_security_group.mr-bot-sg.id
-  cidr_blocks = [
-    var.vpc_cidr
-  ]
+  cidr_ipv4         = "0.0.0.0"
 }
 
 resource "aws_vpc_endpoint" "secretsmanager" {
