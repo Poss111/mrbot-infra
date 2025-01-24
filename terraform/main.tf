@@ -61,9 +61,13 @@ resource "aws_network_acl_association" "public" {
   network_acl_id = aws_network_acl.main.id
 }
 
-// TODO: Update route table to associate to the public subnet
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
+}
+
+resource "aws_route_table_association" "public" {
+  subnet_id      = aws_subnet.public.id
+  route_table_id = aws_route_table.public.id
 }
 
 resource "aws_security_group" "mr-bot-sg" {
@@ -71,28 +75,29 @@ resource "aws_security_group" "mr-bot-sg" {
   description = "Security group for VPC endpoint to Secrets Manager"
   vpc_id      = aws_vpc.main.id
 
-  # TODO Ensure inbout rules are actually added
-  # Ingress rule to allow traffic from specific trusted CIDR ranges (optional)
-  ingress {
-    description = "Allow HTTPS traffic from trusted CIDRs"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-  }
-
-  # Outbound rules (default allows all outbound traffic)
-  egress {
-    from_port = 0
-    to_port   = 0
-    protocol  = "-1" # All traffic
-    cidr_blocks = [
-      var.vpc_cidr
-    ]
-  }
-
   tags = {
     Name = "mr-bot-sg"
   }
+}
+
+resource "aws_security_group_rule" "mr_bot_sg_ingress" {
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  security_group_id = aws_security_group.mr-bot-sg.id
+  description       = "Allow HTTPS traffic from trusted CIDRs"
+}
+
+resource "aws_security_group_rule" "mr_bot_sg_egress" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1" # All traffic
+  security_group_id = aws_security_group.mr-bot-sg.id
+  cidr_blocks = [
+    var.vpc_cidr
+  ]
 }
 
 resource "aws_vpc_endpoint" "secretsmanager" {
