@@ -37,9 +37,20 @@ resource "aws_network_acl_rule" "allow_https_inbound" {
   to_port        = 443
 }
 
-resource "aws_network_acl_rule" "allow_udp_inbound" {
+resource "aws_network_acl_rule" "allow_tcp_inbound" {
   network_acl_id = aws_network_acl.main.id
   rule_number    = 120
+  egress         = false
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = var.public_route_cidr
+  from_port      = 32768
+  to_port        = 65535
+}
+
+resource "aws_network_acl_rule" "allow_udp_inbound" {
+  network_acl_id = aws_network_acl.main.id
+  rule_number    = 130
   egress         = false
   protocol       = "udp"
   rule_action    = "allow"
@@ -69,6 +80,12 @@ resource "aws_route_table" "public" {
 resource "aws_route_table_association" "public" {
   subnet_id      = aws_subnet.public.id
   route_table_id = aws_route_table.public.id
+}
+
+resource "aws_route" "public_internet_gateway" {
+  route_table_id         = aws_route_table.public.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.main.id
 }
 
 resource "aws_security_group" "mr-bot-sg" {
@@ -140,6 +157,7 @@ resource "aws_vpc_endpoint" "s3" {
   route_table_ids   = [aws_route_table.public.id]
 }
 
-resource "aws_egress_only_internet_gateway" "vpc_egress_gateway" {
+resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
+
 }
