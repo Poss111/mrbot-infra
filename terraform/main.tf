@@ -7,15 +7,8 @@ resource "aws_vpc" "main" {
 
 resource "aws_subnet" "public" {
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.0.0/17" # First half of 10.0.0.0/16
+  cidr_block              = var.vpc_cidr
   map_public_ip_on_launch = true
-}
-
-resource "aws_subnet" "public_az2" { # New subnet in a different availability zone
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.128.0/17" # Second half of 10.0.0.0/16
-  map_public_ip_on_launch = true
-  availability_zone       = "us-east-1b" # Specify the different availability zone
 }
 
 resource "aws_network_acl" "main" {
@@ -80,22 +73,12 @@ resource "aws_network_acl_association" "public" {
   network_acl_id = aws_network_acl.main.id
 }
 
-resource "aws_network_acl_association" "public_az2" {
-  subnet_id      = aws_subnet.public_az2.id
-  network_acl_id = aws_network_acl.main.id
-}
-
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 }
 
 resource "aws_route_table_association" "public" {
   subnet_id      = aws_subnet.public.id
-  route_table_id = aws_route_table.public.id
-}
-
-resource "aws_route_table_association" "public_az2" {
-  subnet_id      = aws_subnet.public_az2.id
   route_table_id = aws_route_table.public.id
 }
 
@@ -135,7 +118,7 @@ resource "aws_vpc_endpoint" "secretsmanager" {
   vpc_id              = aws_vpc.main.id
   service_name        = "com.amazonaws.${var.aws_region}.secretsmanager"
   vpc_endpoint_type   = "Interface"
-  subnet_ids          = [aws_subnet.public.id, aws_subnet.public_az2.id]
+  subnet_ids          = [aws_subnet.public.id]
   security_group_ids  = [aws_security_group.mr-bot-sg.id]
   private_dns_enabled = true
 }
@@ -144,7 +127,7 @@ resource "aws_vpc_endpoint" "cloudwatch" {
   vpc_id              = aws_vpc.main.id
   service_name        = "com.amazonaws.${var.aws_region}.logs"
   vpc_endpoint_type   = "Interface"
-  subnet_ids          = [aws_subnet.public.id, aws_subnet.public_az2.id]
+  subnet_ids          = [aws_subnet.public.id]
   security_group_ids  = [aws_security_group.mr-bot-sg.id]
   private_dns_enabled = true
 }
@@ -153,7 +136,7 @@ resource "aws_vpc_endpoint" "ecr" {
   vpc_id              = aws_vpc.main.id
   service_name        = "com.amazonaws.${var.aws_region}.ecr.dkr"
   vpc_endpoint_type   = "Interface"
-  subnet_ids          = [aws_subnet.public.id, aws_subnet.public_az2.id]
+  subnet_ids          = [aws_subnet.public.id]
   security_group_ids  = [aws_security_group.mr-bot-sg.id]
   private_dns_enabled = true
 }
@@ -162,7 +145,7 @@ resource "aws_vpc_endpoint" "ecr_api" {
   vpc_id              = aws_vpc.main.id
   service_name        = "com.amazonaws.${var.aws_region}.ecr.api"
   vpc_endpoint_type   = "Interface"
-  subnet_ids          = [aws_subnet.public.id, aws_subnet.public_az2.id]
+  subnet_ids          = [aws_subnet.public.id]
   security_group_ids  = [aws_security_group.mr-bot-sg.id]
   private_dns_enabled = true
 }
